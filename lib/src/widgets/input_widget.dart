@@ -346,7 +346,8 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   void _phoneNumberSaved() {
     if (this.mounted) {
       String parsedPhoneNumberString =
-          controller!.text.replaceAll(RegExp(r'[^\d+]'), '');
+          Utils.replaceArNumToEnNum(controller!.text)
+              .replaceAll(RegExp(r'[^\d+]'), '');
 
       String phoneNumber =
           '${this.country?.dialCode ?? ''}' + parsedPhoneNumberString;
