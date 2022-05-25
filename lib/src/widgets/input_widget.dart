@@ -13,6 +13,7 @@ import 'package:intl_phone_number_input/src/utils/test/test_helper.dart';
 import 'package:intl_phone_number_input/src/utils/util.dart';
 import 'package:intl_phone_number_input/src/utils/widget_view.dart';
 import 'package:intl_phone_number_input/src/widgets/selector_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Enum for [SelectorButton] types.
 ///
@@ -394,30 +395,9 @@ class _InputWidgetView
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          if (!widget.selectorConfig.setSelectorButtonAsPrefixIcon) ...[
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SelectorButton(
-                  country: state.country,
-                  countries: state.countries,
-                  onCountryChanged: state.onCountryChanged,
-                  selectorConfig: widget.selectorConfig,
-                  selectorTextStyle: widget.selectorTextStyle,
-                  searchBoxDecoration: widget.searchBoxDecoration,
-                  locale: state.locale,
-                  isEnabled: widget.isEnabled,
-                  autoFocusSearchField: widget.autoFocusSearch,
-                  isScrollControlled: widget.countrySelectorScrollControlled,
-                ),
-                SizedBox(
-                  height: state.selectorButtonBottomPadding,
-                ),
-              ],
-            ),
-            SizedBox(width: widget.spaceBetweenSelectorAndTextField),
-          ],
           Flexible(
+            //
+
             child: TextFormField(
               key: Key(TestHelper.TextInputKeyValue),
               textDirection: TextDirection.ltr,
@@ -429,7 +409,40 @@ class _InputWidgetView
               keyboardType: widget.keyboardType,
               textInputAction: widget.keyboardAction,
               style: widget.textStyle,
-              decoration: state.getInputDecoration(widget.inputDecoration),
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: widget.hintText,
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                      const EdgeInsets.only(left: 10.0, right: 10.0),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 1),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(right: 10, left: 10),
+                    child: SelectorButton(
+                      country: state.country,
+                      countries: state.countries,
+                      onCountryChanged: state.onCountryChanged,
+                      selectorConfig: widget.selectorConfig,
+                      selectorTextStyle: widget.selectorTextStyle,
+                      searchBoxDecoration: widget.searchBoxDecoration,
+                      locale: state.locale,
+                      isEnabled: widget.isEnabled,
+                      autoFocusSearchField: widget.autoFocusSearch,
+                      isScrollControlled:
+                          widget.countrySelectorScrollControlled,
+                    ),
+                  )),
+              // decoration: state.getInputDecoration(widget.inputDecoration),
               textAlign: widget.textAlign,
               textAlignVertical: widget.textAlignVertical,
               onEditingComplete: widget.onSubmit,
@@ -452,6 +465,7 @@ class _InputWidgetView
                     : FilteringTextInputFormatter.digitsOnly,
               ],
               onChanged: state.onChanged,
+              //end of flexible
             ),
           )
         ],
