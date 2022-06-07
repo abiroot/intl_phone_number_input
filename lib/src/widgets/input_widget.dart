@@ -14,6 +14,14 @@ import 'package:intl_phone_number_input/src/utils/util.dart';
 import 'package:intl_phone_number_input/src/utils/widget_view.dart';
 import 'package:intl_phone_number_input/src/widgets/selector_button.dart';
 
+/// This allows a value of type T or T?
+/// to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become
+/// non-nullable can still be used with `!` and `?`
+/// to support older versions of the API as well.
+T? _ambiguate<T>(T? value) => value;
+
 /// Enum for [SelectorButton] types.
 ///
 /// Available type includes:
@@ -321,7 +329,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   String? validator(String? value) {
     bool isValid =
         this.isNotValid && (value!.isNotEmpty || widget.ignoreBlank == false);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback((timeStamp) {
       if (isValid && widget.errorMessage != null) {
         setState(() {
           this.selectorButtonBottomPadding =
