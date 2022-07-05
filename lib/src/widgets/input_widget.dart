@@ -15,6 +15,14 @@ import 'package:intl_phone_number_input/src/utils/widget_view.dart';
 import 'package:intl_phone_number_input/src/widgets/selector_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// This allows a value of type T or T?
+/// to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become
+/// non-nullable can still be used with `!` and `?`
+/// to support older versions of the API as well.
+T? _ambiguate<T>(T? value) => value;
+
 /// Enum for [SelectorButton] types.
 ///
 /// Available type includes:
@@ -47,6 +55,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
   final String? Function(String?)? validator;
   final ValueChanged<PhoneNumber>? onSaved;
 
+  final Key? fieldKey;
   final TextEditingController? textFieldController;
   final TextInputType keyboardType;
   final TextInputAction? keyboardAction;
@@ -95,6 +104,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.onFieldSubmitted,
       this.validator,
       this.onSaved,
+      this.fieldKey,
       this.textFieldController,
       this.keyboardAction,
       this.keyboardType = TextInputType.phone,
@@ -225,7 +235,8 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   void phoneNumberControllerListener() {
     if (this.mounted) {
       String parsedPhoneNumberString =
-          controller!.text.replaceAll(RegExp(r'[^\d+]'), '');
+          Utils.replaceArNumToEnNum(controller!.text)
+              .replaceAll(RegExp(r'[^\d+]'), '');
 
       getParsedPhoneNumber(parsedPhoneNumberString, this.country?.alpha2Code)
           .then((phoneNumber) {
@@ -319,7 +330,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   String? validator(String? value) {
     bool isValid =
         this.isNotValid && (value!.isNotEmpty || widget.ignoreBlank == false);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    _ambiguate(WidgetsBinding.instance)!.addPostFrameCallback((timeStamp) {
       if (isValid && widget.errorMessage != null) {
         setState(() {
           this.selectorButtonBottomPadding =
@@ -346,7 +357,8 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   void _phoneNumberSaved() {
     if (this.mounted) {
       String parsedPhoneNumberString =
-          controller!.text.replaceAll(RegExp(r'[^\d+]'), '');
+          Utils.replaceArNumToEnNum(controller!.text)
+              .replaceAll(RegExp(r'[^\d+]'), '');
 
       String phoneNumber =
           '${this.country?.dialCode ?? ''}' + parsedPhoneNumberString;
@@ -391,7 +403,6 @@ class _InputWidgetView
 
     return Container(
       child: Row(
-        textDirection: TextDirection.ltr,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -399,7 +410,7 @@ class _InputWidgetView
             //
 
             child: TextFormField(
-              key: Key(TestHelper.TextInputKeyValue),
+              key: widget.fieldKey ?? Key(TestHelper.TextInputKeyValue),
               textDirection: TextDirection.ltr,
               controller: state.controller,
               cursorColor: widget.cursorColor,
