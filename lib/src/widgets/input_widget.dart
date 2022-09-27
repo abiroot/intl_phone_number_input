@@ -421,7 +421,9 @@ class _InputWidgetView
               textInputAction: widget.keyboardAction,
               style: widget.textStyle,
               decoration: InputDecoration(
-                  border: InputBorder.none,
+                  // border: InputBorder.none,
+                  //fady edit here to change the border in tue 27 sep
+                  border: const OutlineInputBorder(),
                   hintText: widget.hintText,
                   filled: true,
                   fillColor: Colors.white,
